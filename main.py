@@ -87,10 +87,10 @@ e = 0.01
 N = math.log(1 - P, math.e) / math.log(1 - (e / (x_max - x_min)), math.e)
 N = math.ceil(N)
 
-aa = generate_alpha(r, M)
-f_n = f_noize(a, K)
-f_f = f_filter(f_n, aa, K, M)
-new_f_n = f_n[1:-1:1]
+# aa = generate_alpha(r, M)
+# f_n = f_noize(a, K)
+# f_f = f_filter(f_n, aa, K, M)
+# new_f_n = f_n[1:-1:1]
 
 dict_h = {}
 for h in H:
