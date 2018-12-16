@@ -11,10 +11,16 @@ def generate_alpha(r, M):
     alpha = list()
     alpha.append(alpha_M_1)
     r_range = int((r - 1) / 2)
-    for _ in range(r_range):
+    for _ in range(r_range - 1):
         el = 0.5 * random.uniform(0, 1 - sum(i for i in alpha))
         alpha.append(el)
         alpha.insert(0, el)
+    summ = 0
+    for i in alpha:
+        summ += i
+    el = 0.5 * (1 - summ)
+    alpha.append(el)
+    alpha.insert(0, el)
     return alpha
 
 
@@ -71,7 +77,7 @@ def f_filter(f_noiz, alpha, K, M):
             s += el
         s = s ** 0.5
         # print('(', x_k, ";", s, ')')
-        f_list.append(el)
+        f_list.append(s)
     return f_list
 
 
@@ -96,7 +102,7 @@ dict_h = {}
 f_n = f_noize(a, K)
 for h in H:
     min_dis_J = 100
-    min_J = 0
+    min_J = 100
     min_alpha = [0, 0, 0]
     min_w = 0
     min_d = 0
@@ -106,11 +112,12 @@ for h in H:
         f_f = f_filter(f_n, alpha, K, M)
         w = Chebyshev_dis_f_for_w(f_f)
         d = Chebyshev_dis_f_for_d(f_f, f_n)
+        J = fun_J(h, w, d)
         dis_J = Chebyshev_dis_w_d(w, d)
-        if dis_J < min_dis_J:
+        if J < min_J:
             min_alpha = alpha
             min_dis_J = dis_J
-            min_J = fun_J(h, w, d)
+            min_J = J
             min_w = w
             min_d = d
             min_f_f = f_f
