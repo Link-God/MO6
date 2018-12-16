@@ -57,7 +57,7 @@ def f_noize(a, K):
 
 def f_filter(f_noiz, alpha, K, M):
     f_list = list()
-        for k in K:
+    for k in K:
         j_start = k - M
         j_end = k + M + 1
         if j_start < 0 or j_end > len(K):
@@ -65,9 +65,9 @@ def f_filter(f_noiz, alpha, K, M):
         s = 0
         x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
         for j in range(j_start, j_end, 1):
-            f_n_el = f_noiz[j - 1]
+            f_n_el = f_noiz[j]
             alpha_el = alpha[j + M + 1 - k - 1]
-            el = f_n_el ** 2 * alpha_el
+            el = (f_n_el ** 2) * alpha_el
             s += el
         s = s ** 0.5
         # print('(', x_k, ";", s, ')')
@@ -93,38 +93,51 @@ N = math.ceil(N)
 # new_f_n = f_n[1:-1:1]
 
 dict_h = {}
+f_n = f_noize(a, K)
 for h in H:
-    min_J = 100
+    min_dis_J = 100
+    min_J = 0
     min_alpha = [0, 0, 0]
     min_w = 0
     min_d = 0
     min_f_f = None
-    min_f_n = None
     for _ in range(N):
         alpha = generate_alpha(r, M)
-        f_n = f_noize(a, K)
         f_f = f_filter(f_n, alpha, K, M)
         w = Chebyshev_dis_f_for_w(f_f)
         d = Chebyshev_dis_f_for_d(f_f, f_n)
-        J = fun_J(h, w, d)
-        if J < min_J:
+        dis_J = Chebyshev_dis_w_d(w, d)
+        if dis_J < min_dis_J:
             min_alpha = alpha
-            min_J = J
+            min_dis_J = dis_J
+            min_J = fun_J(h, w, d)
             min_w = w
             min_d = d
             min_f_f = f_f
-            min_f_n = f_n
-    dict_h.update({h: [min_J, min_alpha, min_w, min_d, min_f_f, min_f_n]})
+    dict_h.update({h: [min_dis_J, min_alpha, min_w, min_d, min_f_f, f_n, min_J]})
 
 need_h = -1
 
 min_dis = 100
 for h, l in dict_h.items():
-    dis = Chebyshev_dis_w_d(l[2], l[3])
-    if dis > min_dis:
-        break
+    dis = l[0]
+    # if dis > min_dis:
+    #     break
     if dis < min_dis:
         min_dis = dis
         need_h = h
 
-print(need_h, dict_h[need_h])
+f_fff = dict_h[need_h][4]
+f_nnn = dict_h[need_h][5]
+
+for k, el in enumerate(f_nnn):
+    k = k + 1
+    x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
+    print('(', x_k, ";", el, ')')
+
+print('\n')
+
+for k, el in enumerate(f_fff):
+    k = k + 1
+    x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
+    print('(', x_k, ";", el, ')')
