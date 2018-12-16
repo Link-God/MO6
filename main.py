@@ -57,11 +57,11 @@ def f_noize(a, K):
 
 def f_filter(f_noiz, alpha, K, M):
     f_list = list()
-    for k in K:
-        if k < M + 1:
-            continue
+        for k in K:
         j_start = k - M
         j_end = k + M + 1
+        if j_start < 0 or j_end > len(K):
+            continue
         s = 0
         x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
         for j in range(j_start, j_end, 1):
