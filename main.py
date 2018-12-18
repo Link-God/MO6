@@ -1,5 +1,6 @@
 import random
 import math
+import matplotlib.pyplot as plt
 
 
 def f(x):
@@ -7,18 +8,18 @@ def f(x):
 
 
 def generate_alpha(r, M):
-    alpha_M_1 = random.uniform(0, 1)
+    alpha_M_1 = round(random.uniform(0, 1), 4)
     alpha = list()
     alpha.append(alpha_M_1)
     r_range = int((r - 1) / 2)
     for _ in range(r_range - 1):
-        el = 0.5 * random.uniform(0, 1 - sum(i for i in alpha))
+        el = round(0.5 * random.uniform(0, 1 - sum(i for i in alpha)), 4)
         alpha.append(el)
         alpha.insert(0, el)
     summ = 0
     for i in alpha:
         summ += i
-    el = 0.5 * (1 - summ)
+    el = round(0.5 * (1 - summ), 4)
     alpha.append(el)
     alpha.insert(0, el)
     return alpha
@@ -29,7 +30,7 @@ def Chebyshev_dis_f_for_w(f_filter):
     for index in range(1, len(f_filter), 1):
         el = abs(f_filter[index] - f_filter[index - 1])
         m_max = max(el, m_max)
-    return m_max
+    return round(m_max, 4)
 
 
 def Chebyshev_dis_f_for_d(f_filter, f_noize):
@@ -38,7 +39,7 @@ def Chebyshev_dis_f_for_d(f_filter, f_noize):
     for index in range(0, len(f_filter), 1):
         el = abs(f_filter[index] - f_noize[index])
         m_max = max(el, m_max)
-    return m_max
+    return round(m_max, 4)
 
 
 def Chebyshev_dis_w_d(w, d):
@@ -56,7 +57,7 @@ def f_noize(a, K):
     for k in K:
         x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
         el = f(x_k) + random.uniform(-a, a)
-        f_list.append(el)
+        f_list.append(round(el, 4))
         # print('(', x_k, ";", el, ')')
     return f_list
 
@@ -77,11 +78,11 @@ def f_filter(f_noiz, alpha, K, M):
             s += el
         s = s ** 0.5
         # print('(', x_k, ";", s, ')')
-        f_list.append(s)
+        f_list.append(round(s, 4))
     return f_list
 
 
-r = 3  # r = 5
+r = 5  # r = 5
 M = int((r - 1) / 2)
 x_min = 0
 x_max = math.pi
@@ -126,25 +127,31 @@ for h in H:
 need_h = -1
 
 min_dis = 100
+fig = plt.figure()
 for h, l in dict_h.items():
-    dis = l[0]
+    plt.scatter(l[2], l[3])
+    dis = round(l[0], 4)
+    print('h=', h, 'dis= ', dis, 'alpha', l[1], ' w= ', l[2], ' d= ', l[3])
     # if dis > min_dis:
     #     break
     if dis < min_dis:
         min_dis = dis
         need_h = h
 
+print('h* = ', need_h, 'J=', dict_h[need_h][-1], 'w=', dict_h[need_h][2], 'd= ', dict_h[need_h][3])
+
 f_fff = dict_h[need_h][4]
 f_nnn = dict_h[need_h][5]
 
-for k, el in enumerate(f_nnn):
-    k = k + 1
-    x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
-    print('(', x_k, ";", el, ')')
-
-print('\n')
-
-for k, el in enumerate(f_fff):
-    k = k + 1
-    x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
-    print('(', x_k, ";", el, ')')
+# for k, el in enumerate(f_nnn):
+#     k = k + 1
+#     x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
+#     print('(', x_k, ";", el, ')')
+#
+# print('\n')
+#
+# for k, el in enumerate(f_fff):
+#     k = k + 1
+#     x_k = x_min + k * (x_max - x_min) / (len(K) - 1)
+#     print('(', x_k, ";", el, ')')
+plt.show()
